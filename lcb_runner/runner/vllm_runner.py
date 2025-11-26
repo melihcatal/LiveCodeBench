@@ -54,7 +54,7 @@ class VLLMRunner(BaseRunner):
             remaining_prompts.append(prompt)
             remaining_indices.append(prompt_index)
         if remaining_prompts:
-            if self.args.enable_lora:
+            if self.args.enable_lora and self.args.lora_adapter_path is not None:
                 vllm_outputs = self.llm.generate(
                     remaining_prompts,
                     self.sampling_params,

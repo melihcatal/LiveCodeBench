@@ -131,6 +131,17 @@ def get_args():
         default=None,
         help="End date for the contest to filter the evaluation file (format - YYYY-MM-DD)",
     )
+    parser.add_argument(
+        "--enable_lora",
+        action="store_true",
+        help="Enable LoRA adapters for vllm",
+    )
+    parser.add_argument(
+        "--lora_adapter_path",
+        type=str,
+        default=None,
+        help="Path to the LoRA adapter",
+    )
 
     args = parser.parse_args()
 
