@@ -1,6 +1,7 @@
 try:
     from transformers import AutoTokenizer
     from vllm import LLM, SamplingParams
+    from vllm.lora.request import LoRARequest
 except ImportError as e:
     # print("Cannot import vllm")
     pass
@@ -10,6 +11,7 @@ from lcb_runner.runner.base_runner import BaseRunner
 
 class VLLMRunner(BaseRunner):
     def __init__(self, args, model):
+        print(f"Using VLLM Runner with args: {args} and model: {model.model_name}")
         super().__init__(args, model)
         model_tokenizer_path = (
             model.model_name if args.local_model_path is None else args.local_model_path
@@ -23,7 +25,9 @@ class VLLMRunner(BaseRunner):
             disable_custom_all_reduce=True,
             enable_prefix_caching=args.enable_prefix_caching,
             trust_remote_code=args.trust_remote_code,
+            enable_lora=args.enable_lora,
         )
+
         self.sampling_params = SamplingParams(
             n=self.args.n,
             max_tokens=self.args.max_tokens,
@@ -33,6 +37,7 @@ class VLLMRunner(BaseRunner):
             presence_penalty=0,
             stop=self.args.stop,
         )
+        self.args = args
 
     def _run_single(self, prompt: str) -> list[str]:
         pass
@@ -49,7 +54,17 @@ class VLLMRunner(BaseRunner):
             remaining_prompts.append(prompt)
             remaining_indices.append(prompt_index)
         if remaining_prompts:
-            vllm_outputs = self.llm.generate(remaining_prompts, self.sampling_params)
+            if self.args.enable_lora:
+                vllm_outputs = self.llm.generate(
+                    remaining_prompts,
+                    self.sampling_params,
+                    LoRARequest("lora_adapter", 1, self.args.lora_adapter_path),
+                )
+            else:
+                vllm_outputs = self.llm.generate(
+                    remaining_prompts,
+                    self.sampling_params,
+                )
             if self.args.use_cache:
                 assert len(remaining_prompts) == len(vllm_outputs)
                 for index, remaining_prompt, vllm_output in zip(
