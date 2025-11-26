@@ -132,7 +132,7 @@ LanguageModelList: list[LanguageModel] = [
         link="https://huggingface.co/meta-llama/Llama-3.1-405B-Instruct-FP8",
     ),
     ## LLama3.3 Instruct (8B, 70B)
-    # LanguageModel( 
+    # LanguageModel(
     #     "meta-llama/Llama-3.3-8B-Instruct", # Has been removed from HuggingFace by meta-llama
     #     "LLama3.3-8b-Ins",
     #     LMStyle.LLaMa3,
@@ -566,6 +566,14 @@ LanguageModelList: list[LanguageModel] = [
         LMStyle.GenericBase,
         datetime(2023, 1, 1),
         link="https://huggingface.co/bigcode/starcoder2-7b-magicoder-instruct/tree/main",
+    ),
+    # ---- Deepseek coder 1.3B ----
+    LanguageModel(
+        "deepseek-ai/deepseek-coder-1.3b-base",
+        "Deepseek-Coder-1.3B-Base",
+        LMStyle.GenericBase,
+        datetime(2023, 1, 1),
+        link="https://huggingface.co/deepseek-ai/deepseek-coder-1.3b-base",
     ),
     LanguageModel(
         "google/codegemma-7b",
